@@ -15,12 +15,11 @@ jobs:
       - name: Checkout source
         uses: actions/checkout@v4
 
-      - name: Extract Android project from ZIP
+      - name: Extract fixed Android project
         run: |
-          ZIP="$(find . -maxdepth 1 -type f -name '*.zip' | head -n 1)"
-          if [ -z "$ZIP" ]; then echo 'File ZIP proyek tidak ditemukan'; exit 1; fi
+          test -f kipa-leles-android-project-fixed.zip || { echo 'ZIP perbaikan tidak ditemukan'; exit 1; }
           mkdir extracted
-          unzip -q "$ZIP" -d extracted
+          unzip -q kipa-leles-android-project-fixed.zip -d extracted
           cp -a extracted/kipa-android/. .
 
       - name: Set up Java 17
@@ -37,10 +36,10 @@ jobs:
       - name: Build debug APK
         run: gradle assembleDebug
 
-      - name: Upload APK
+      - name: Upload APK artifact
         uses: actions/upload-artifact@v4
         with:
-          name: KIPA-Leles-APK
+          name: KIPA-Leles-APK-Perbaikan
           path: app/build/outputs/apk/debug/app-debug.apk
           if-no-files-found: error
           retention-days: 30
